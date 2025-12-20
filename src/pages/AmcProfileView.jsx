@@ -288,7 +288,7 @@ const AmcProfileView = () => {
                   </span>
                   <span className="font-light mt-4">Expenses</span>
                   <span className="font-medium">
-                    {totalExpense || "NA"}
+                 {totalExpense.toFixed(2)  || "NA"}
                   </span>{" "}
                   <span className="font-light mt-4">
                     Total Credit (
@@ -395,7 +395,7 @@ const AmcProfileView = () => {
                     </span>
                     <span className="font-light mt-4">Expenses</span>
 
-                    <span className="font-medium">{totalExpense || "NA"}</span>
+                    <span className="font-medium">{totalExpense.toFixed(2)  || "NA"}</span>
                   </span>
                 </div>
                 <div className="">
