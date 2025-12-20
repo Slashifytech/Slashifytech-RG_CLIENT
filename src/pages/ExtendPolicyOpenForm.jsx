@@ -326,7 +326,7 @@ const [loadingVin, setLoadingVin] = useState(false);
               </div>
               <div>
                 <label className="font-semibold">
-                  Previously Customer Upcoming Services
+                  Previously Service Offered
                 </label> <span className="text-red-500">*</span>
                 <div className="w-full h-auto px-3 flex items-center mt-1 bg-[#f1f1f1] rounded-md">
                   {item?.vehicleDetails?.custUpcomingService?.length > 0

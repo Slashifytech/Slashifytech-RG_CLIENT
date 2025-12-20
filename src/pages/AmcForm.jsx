@@ -211,8 +211,8 @@ const AMCForm = () => {
     {
       name: "custUpcomingService",
       type: "multiselect",
-      placeholder: "Customer Upcoming Service",
-      label: "Customer Upcoming Service",
+      placeholder: "Service Offered",
+      label: "Service Offered",
       options: upcomingServiceOpt,
       required: true,
     },

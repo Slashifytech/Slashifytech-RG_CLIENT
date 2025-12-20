@@ -394,7 +394,7 @@ if (serviceData && typeof serviceData === "object") {
                 📄
               </div>
               <h2 className="text-lg font-semibold text-gray-700">
-                AMC Expenses by Customer Upcoming Service Wise
+                AMC Expenses by Service Offered Wise
               </h2>
             </div>
             {console.log("test", pmsServices  )}
