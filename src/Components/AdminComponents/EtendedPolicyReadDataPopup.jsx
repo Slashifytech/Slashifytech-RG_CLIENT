@@ -43,7 +43,7 @@ export const ExtendedPolicyReadDataPopup = ({ isPopUpOpen, closePopUp, item }) =
 
               {/* Column 2 */}
               <div>
-                <label className="font-semibold">Upcoming Services</label>
+                <label className="font-semibold">Service Offered</label>
                 <div>
                   {latestExt?.upcomingPackage?.length > 0
                     ? latestExt.upcomingPackage.join(", ")

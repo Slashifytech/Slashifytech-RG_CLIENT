@@ -40,6 +40,7 @@ import EwPdf from "./pages/EwPdf";
 import AmcSalesForm from "./pages/AmcSalesForm";
 import { ExtendedPolicyOpenForm } from "./pages/ExtendPolicyOpenForm";
 import SubmitPage from "./Components/AdminComponents/SubmitPage";
+import PublicSubmissionPopup from "./Components/PublicSubmissionPopup";
 
 const router = createBrowserRouter([
   {
@@ -56,6 +57,12 @@ const router = createBrowserRouter([
     path: "/submitted-amc-form",
     element: (
         <SubmitPage/>
+    ),
+  },
+  {
+    path: "/extended-amc-submitted",
+    element: (
+        <PublicSubmissionPopup/>
     ),
   },
      {

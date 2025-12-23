@@ -12,6 +12,7 @@ import { v4 as uuidv4 } from "uuid";
 import { storage } from "../../Util/fireBase";
 import { useEffect } from "react";
 import { upcomingServiceOpt } from "../data";
+import { useNavigate } from "react-router-dom";
 
 export const ExtendedPolicyOpenForm = () => {
   const [formData, setFormData] = useState({
@@ -22,11 +23,12 @@ export const ExtendedPolicyOpenForm = () => {
     paymentCopyProof: "",
     upcomingPackage: [],
     vinNumber: "",
+    salesTeamEmail: "",
   });
-const [item, setItem] = useState(null);
-const [vinVerified, setVinVerified] = useState(false);
-const [loadingVin, setLoadingVin] = useState(false);
-
+  const [item, setItem] = useState(null);
+  const [vinVerified, setVinVerified] = useState(false);
+  const [loadingVin, setLoadingVin] = useState(false);
+  const navigate = useNavigate()
 
   // Handle input updates
   const handleChange = (e) => {
@@ -84,12 +86,11 @@ const [loadingVin, setLoadingVin] = useState(false);
     try {
       // toast.success("File deleted successfully!");
 
-   
-        setFormData((prevData) => ({
-          ...prevData,
-          paymentCopyProof: "",
-        }));
-      
+      setFormData((prevData) => ({
+        ...prevData,
+        paymentCopyProof: "",
+      }));
+
       await deleteObject(storageRef);
     } catch (error) {
       console.error("Error deleting file:", error);
@@ -98,130 +99,131 @@ const [loadingVin, setLoadingVin] = useState(false);
   };
 
   const validateFinalSubmit = () => {
-  if (!vinVerified) {
-    toast.error("Please verify VIN number first");
-    return false;
-  }
-
-  if (!formData.extendedPolicyPeriod) {
-    toast.error("Extended Policy Period is required");
-    return false;
-  }
-
-  if (!formData.additionalPrice) {
-    toast.error("Additional Price is required");
-    return false;
-  }
-
-  if (!formData.validDate) {
-    toast.error("Valid Date is required");
-    return false;
-  }
-
-  if (!formData.validMileage) {
-    toast.error("Valid Mileage is required");
-    return false;
-  }
-
-  if (!formData.paymentCopyProof) {
-    toast.error("Payment Copy Proof is required");
-    return false;
-  }
-
-  if (
-    !Array.isArray(formData.upcomingPackage) ||
-    formData.upcomingPackage.length === 0
-  ) {
-    toast.error("Please select at least one Upcoming Package");
-    return false;
-  }
-
-  return true;
-};
-
- const handleSubmit = async (e) => {
-  e.preventDefault();
-
-  if (!validateFinalSubmit()) return;
-
-  const finalData = {
-    ...formData,
-    openForm: true,
-  };
-
-  try {
-    const res = await extendedAMCOpen(finalData, formData.vinNumber);
-
-    toast.success(res?.message || "Submitted successfully");
-
-    setFormData({
-      extendedPolicyPeriod: "",
-      additionalPrice: "",
-      paymentCopyProof: "",
-      vinNumber: "",
-      validDate: "",
-      validMileage: "",
-      upcomingPackage: [],
-    });
-
-    setVinVerified(false);
-  } catch (error) {
-    toast.error(
-      error?.response?.data?.message ||
-      error?.message ||
-      "Something went wrong"
-    );
-  }
-};
-
-  const submitVinVerify = async () => {
-  if (!formData.vinNumber) {
-    return toast.error("Please enter VIN number");
-  }
-
-  setLoadingVin(true);
-
-  try {
-    const res = await getAMCbyId(formData?.vinNumber, null);
-    const fetchedData = res?.data;
-
-    if (!fetchedData) {
-      setVinVerified(false);
-      setItem(null);
-      toast.error("VIN doesn't exist or invalid!");
-      return;
+    if (!vinVerified) {
+      toast.error("Please verify VIN number first");
+      return false;
     }
 
-    setItem(fetchedData);
-    setVinVerified(true);
+    if (!formData.extendedPolicyPeriod) {
+      toast.error("Extended Policy Period is required");
+      return false;
+    }
 
-    toast.success("VIN Verified Successfully!");
+    if (!formData.additionalPrice) {
+      toast.error("Additional Price is required");
+      return false;
+    }
 
-    // Auto-fill fields from VIN data
-    setFormData((prev) => ({
-      ...prev,
-      validMileage: fetchedData?.vehicleDetails?.agreementValidMilage || "",
-      extendedPolicyPeriod: "",
-      upcomingPackage: [],
-    }));
+    if (!formData.validDate) {
+      toast.error("Valid Date is required");
+      return false;
+    }
 
-  } catch (error) {
-    setVinVerified(false);
-    setItem(null);
-    console.error(error);
-    toast.error("Invalid VIN number or not found");
-  } finally {
-    setLoadingVin(false);
-  }
-};
+    if (!formData.validMileage) {
+      toast.error("Valid Mileage is required");
+      return false;
+    }
 
+    if (!formData.paymentCopyProof) {
+      toast.error("Payment Copy Proof is required");
+      return false;
+    }
+
+    if (
+      !Array.isArray(formData.upcomingPackage) ||
+      formData.upcomingPackage.length === 0
+    ) {
+      toast.error("Please select at least one Upcoming Package");
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!validateFinalSubmit()) return;
+
+    const finalData = {
+      ...formData,
+      openForm: true,
+    };
+
+    try {
+      const res = await extendedAMCOpen(finalData, formData.vinNumber);
+
+      toast.success(res?.message || "Submitted successfully");
+
+      setFormData({
+        extendedPolicyPeriod: "",
+        additionalPrice: "",
+        paymentCopyProof: "",
+        vinNumber: "",
+        validDate: "",
+        validMileage: "",
+        salesTeamEmail: "",
+        upcomingPackage: [],
+      });
+
+      setVinVerified(false);
+        navigate("/extended-amc-submitted");
+    } catch (error) {
+      toast.error(
+        error?.response?.data?.message ||
+          error?.message ||
+          "Something went wrong"
+      );
+    }
+  };
+
+  const submitVinVerify = async () => {
+    if (!formData.vinNumber) {
+      return toast.error("Please enter VIN number");
+    }
+
+    setLoadingVin(true);
+
+    try {
+      const res = await getAMCbyId(formData?.vinNumber, null);
+      const fetchedData = res?.data;
+
+      if (!fetchedData) {
+        setVinVerified(false);
+        setItem(null);
+        toast.error("VIN doesn't exist or invalid!");
+        return;
+      }
+
+      setItem(fetchedData);
+      setVinVerified(true);
+
+      toast.success("VIN Verified Successfully!");
+
+      // Auto-fill fields from VIN data
+      setFormData((prev) => ({
+        ...prev,
+        validMileage: fetchedData?.vehicleDetails?.agreementValidMilage || "",
+        extendedPolicyPeriod: "",
+        upcomingPackage: [],
+      }));
+    } catch (error) {
+      setVinVerified(false);
+      setItem(null);
+      console.error(error);
+      toast.error("Invalid VIN number or not found");
+    } finally {
+      setLoadingVin(false);
+    }
+  };
 
   return (
     <>
- <div className="fixed inset-0 flex items-center justify-center popup-backdrop z-50 sm:px-52 px-6">
-  <div className="bg-white pb-9 rounded-lg md:w-full w-full relative p-9 app-open-animation 
-       max-h-[90vh] overflow-y-auto">
-
+      <div className="fixed inset-0 flex items-center justify-center popup-backdrop z-50 sm:px-52 px-6">
+        <div
+          className="bg-white pb-9 rounded-lg md:w-full w-full relative p-9 app-open-animation 
+       max-h-[90vh] overflow-y-auto"
+        >
           <p className="text-center font-DMsans text-black font-semibold text-[16px]">
             Extend AMC Policy
           </p>
@@ -241,21 +243,21 @@ const [loadingVin, setLoadingVin] = useState(false);
                   placeholder="Enter Vin number"
                 />
 
-              <button
-  type="button"
-  onClick={submitVinVerify}
-  disabled={loadingVin}
-  className={`text-white text-sm px-4 py-2 mt-3 rounded-md ${
-    loadingVin ? "bg-gray-500" : "bg-blue-500 hover:bg-blue-600"
-  }`}
->
-  {loadingVin ? "Verifying..." : "Verify VIN"}
-</button>
-
+                <button
+                  type="button"
+                  onClick={submitVinVerify}
+                  disabled={loadingVin}
+                  className={`text-white text-sm px-4 py-2 mt-3 rounded-md ${
+                    loadingVin ? "bg-gray-500" : "bg-blue-500 hover:bg-blue-600"
+                  }`}
+                >
+                  {loadingVin ? "Verifying..." : "Verify VIN"}
+                </button>
               </div>
 
               <div>
-                <label className="font-semibold">Extended Policy Period</label> <span className="text-red-500">*</span>
+                <label className="font-semibold">Extended Policy Period</label>{" "}
+                <span className="text-red-500">*</span>
                 <InputField
                   name="extendedPolicyPeriod"
                   value={formData.extendedPolicyPeriod}
@@ -266,7 +268,8 @@ const [loadingVin, setLoadingVin] = useState(false);
               </div>
 
               <div>
-                <label className="font-semibold">Additional Price</label> <span className="text-red-500">*</span>
+                <label className="font-semibold">Additional Price</label>{" "}
+                <span className="text-red-500">*</span>
                 <InputField
                   name="additionalPrice"
                   value={formData.additionalPrice}
@@ -279,7 +282,8 @@ const [loadingVin, setLoadingVin] = useState(false);
               <div>
                 <label className="font-semibold">
                   Current Agreement Period
-                </label> <span className="text-red-500">*</span>
+                </label>{" "}
+                <span className="text-red-500">*</span>
                 <InputField
                   value={item?.vehicleDetails?.agreementPeriod || ""}
                   disabled
@@ -288,7 +292,8 @@ const [loadingVin, setLoadingVin] = useState(false);
               </div>
 
               <div>
-                <label className="font-semibold">Start Date</label> <span className="text-red-500">*</span>
+                <label className="font-semibold">Start Date</label>{" "}
+                <span className="text-red-500">*</span>
                 <InputField
                   value={item?.vehicleDetails?.agreementStartDate || ""}
                   disabled
@@ -297,7 +302,8 @@ const [loadingVin, setLoadingVin] = useState(false);
               </div>
 
               <div>
-                <label className="font-semibold">Start Mileage</label> <span className="text-red-500">*</span>
+                <label className="font-semibold">Start Mileage</label>{" "}
+                <span className="text-red-500">*</span>
                 <InputField
                   value={item?.vehicleDetails?.agreementStartMilage}
                   disabled
@@ -306,7 +312,8 @@ const [loadingVin, setLoadingVin] = useState(false);
               </div>
 
               <div>
-                <label className="font-semibold">Valid Date</label> <span className="text-red-500">*</span>
+                <label className="font-semibold">Valid Date</label>{" "}
+                <span className="text-red-500">*</span>
                 <InputField
                   name="validDate"
                   value={formData.validDate}
@@ -316,7 +323,8 @@ const [loadingVin, setLoadingVin] = useState(false);
               </div>
 
               <div>
-                <label className="font-semibold">Valid Mileage</label> <span className="text-red-500">*</span>
+                <label className="font-semibold">Valid Mileage</label>{" "}
+                <span className="text-red-500">*</span>
                 <InputField
                   name="validMileage"
                   value={formData.validMileage}
@@ -327,16 +335,28 @@ const [loadingVin, setLoadingVin] = useState(false);
               <div>
                 <label className="font-semibold">
                   Previously Service Offered
-                </label> <span className="text-red-500">*</span>
+                </label>{" "}
+                <span className="text-red-500">*</span>
                 <div className="w-full h-auto px-3 flex items-center mt-1 bg-[#f1f1f1] rounded-md">
                   {item?.vehicleDetails?.custUpcomingService?.length > 0
                     ? item?.vehicleDetails?.custUpcomingService.join(", ")
                     : "No data"}
                 </div>
+                 <div className="mt-6">
+                <label className="font-semibold">Sales Team Email</label> <span className="text-red-500">*</span>
+                <InputField
+                  name="salesTeamEmail"
+                  type="email"
+                  value={formData.salesTeamEmail}
+                  onchange={handleChange}
+                  placeholder="Enter sales team email"
+                  className="w-full h-12 px-3 mt-1 bg-[#f1f1f1] rounded-md"
+                />
+              </div>
               </div>
               {/* MULTI SELECT */}
               <MultiSelectInput
-                label="Customer Upcoming Package"
+                label="Service Offered"
                 name="upcomingPackage"
                 value={formData.upcomingPackage}
                 onChange={handleChange}
@@ -356,7 +376,9 @@ const [loadingVin, setLoadingVin] = useState(false);
                 fileUrl={formData.paymentCopyProof}
                 imp={true}
                 onFileSelect={(f) => handleFileSelect("paymentCopyProof", f)}
-                deleteFile={() => deleteFile(formData.paymentCopyProof, "paymentCopyProof")}
+                deleteFile={() =>
+                  deleteFile(formData.paymentCopyProof, "paymentCopyProof")
+                }
               />
             </div>
 
