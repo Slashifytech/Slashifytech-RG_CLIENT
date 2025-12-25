@@ -81,6 +81,21 @@ export const getAMCbyId = async (id, status, newExtend) => {
     throw error;
   }
 };
+export const getAMCbyIdPublic = async (id, status) => {
+  try {
+    const response = await apiurlOpen.get(`/amcByIdPub`, {
+      params: {
+        id: id,
+        status: status,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.log("Error in Adding Amc:", error);
+    throw error;
+  }
+};
 
 export const getAllAmcList = async (
   page,

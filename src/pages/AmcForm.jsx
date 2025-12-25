@@ -487,8 +487,7 @@ const AMCForm = () => {
     }
   }, [id]);
   useEffect(() => {
-    if (!amcByIdorStatus?.data) return;
-
+  if (!amcByIdorStatus?.data) return;
     const vehicle = amcByIdorStatus?.data?.vehicleDetails || {};
     const extended = amcByIdorStatus?.data?.extendedPolicy || {};
     const amcStatus = amcByIdorStatus?.data?.amcStatus;
@@ -501,16 +500,21 @@ const AMCForm = () => {
       combinedUpcoming = [...combinedUpcoming, ...extended.upcomingPackage];
     }
 
-    setAMCData((prev) => ({
-      ...prev,
-      ...amcByIdorStatus.data,
-      vehicleDetails: {
-        ...prev.vehicleDetails,
-        ...vehicle,
-        custUpcomingService: combinedUpcoming,
-      },
-    }));
-  }, [amcByIdorStatus?.data]);
+  const data = amcByIdorStatus.data;
+
+  // Always trust backend–calculated availableCredit
+
+  setAMCData((prev) => ({
+    ...prev,
+    ...data,
+    vehicleDetails: {
+      ...prev.vehicleDetails,
+      ...data.vehicleDetails,
+      custUpcomingService: combinedUpcoming,
+    },
+  }));
+}, [amcByIdorStatus?.data]);
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();

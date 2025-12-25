@@ -63,7 +63,7 @@ export const ExtendedPolicyPopUp = ({ isPopUpOpen, closePopUp, item }) => {
 
       setFormData((prevData) => ({
         ...prevData,
-          paymentCopyProof: downloadURL,
+        paymentCopyProof: downloadURL,
       }));
 
       toast.success("File uploaded successfully!");
@@ -81,45 +81,44 @@ export const ExtendedPolicyPopUp = ({ isPopUpOpen, closePopUp, item }) => {
     try {
       // toast.success("File deleted successfully!");
 
-    
-        setFormData((prevData) => ({
-          ...prevData,
-          paymentCopyProof: "",
-        }));
-      
+      setFormData((prevData) => ({
+        ...prevData,
+        paymentCopyProof: "",
+      }));
+
       await deleteObject(storageRef);
     } catch (error) {
       console.error("Error deleting file:", error);
       // toast.error("Error deleting file. Please try again.");
     }
   };
-
+const pendingUpcomingPackage = Array.isArray(item?.extendedPolicy)
+  ? item.extendedPolicy.find(
+      (ep) => ep?.extendedStatus === "pending"
+    )?.upcomingPackage
+  : item?.extendedPolicy?.extendedStatus === "pending"
+  ? item.extendedPolicy.upcomingPackage
+  : [];
   useEffect(() => {
     if (isPopUpOpen && item) {
+      const latestExtended =
+        Array.isArray(item.extendedPolicy) && item.extendedPolicy.length > 0
+          ? item.extendedPolicy[item.extendedPolicy.length - 1]
+          : null;
+
       setFormData({
-        extendedPolicyPeriod:
-          item?.extendedPolicy?.[item?.extendedPolicy.length - 1]
-            ?.extendedPolicyPeriod || "",
-        additionalPrice:
-          item?.extendedPolicy?.[item?.extendedPolicy.length - 1]
-            ?.additionalPrice || "",
-        paymentCopyProof:
-          item?.extendedPolicy?.[item?.extendedPolicy.length - 1]
-            ?.paymentCopyProof || "",
+        extendedPolicyPeriod: latestExtended?.extendedPolicyPeriod || "",
+        additionalPrice: latestExtended?.additionalPrice || "",
+        paymentCopyProof: latestExtended?.paymentCopyProof || "",
         validDate:
-          item?.extendedPolicy?.[item?.extendedPolicy.length - 1]?.validDate ||
+          latestExtended?.validDate ||
           item?.vehicleDetails?.agreementValidDate ||
           "",
         validMileage:
-          item?.extendedPolicy?.[item?.extendedPolicy.length - 1]
-            ?.validMileage ||
+          latestExtended?.validMileage ||
           item?.vehicleDetails?.agreementValidMilage ||
           "",
-        upcomingPackage:
-          item?.extendedPolicy?.[item?.extendedPolicy.length - 1]
-            ?.upcomingPackage ||
-          item?.vehicleDetails?.custUpcomingService ||
-          [],
+        upcomingPackage: pendingUpcomingPackage|| [],
       });
     } else if (isPopUpOpen) {
       // Reset when popup opens with no existing data
@@ -129,131 +128,136 @@ export const ExtendedPolicyPopUp = ({ isPopUpOpen, closePopUp, item }) => {
         paymentCopyProof: "",
         validDate: "",
         validMileage: "",
+        upcomingPackage: [],
       });
     }
   }, [isPopUpOpen, item]);
-  useEffect(() => {
-    // console.log("Existing Data:", item?.vehicleDetails?.custUpcomingService);
-    // console.log("Form Value Before Set:", formData.upcomingPackage);
-  }, [item]);
+const extendedPolicies = Array.isArray(item?.extendedPolicy)
+  ? item.extendedPolicy
+  : item?.extendedPolicy
+  ? [item.extendedPolicy]
+  : [];
+const approvedExtendedServices = extendedPolicies
+  .filter(
+    (ep) =>
+      ep?.extendedStatus === "approved" &&
+      Array.isArray(ep?.upcomingPackage)
+  )
+  .flatMap((ep) => ep.upcomingPackage);
 
-  const existingServices = [
-    ...(item?.extendedPolicy?.upcomingPackage || []),
-    ...(item?.vehicleDetails?.custUpcomingService || []),
-  ];
-  const filteredOptions = upcomingServiceOpt.filter(
-    (opt) => !existingServices?.includes(opt.value)
-  );
 
-  const latestExtendedPolicy =
-  item?.extendedPolicy
+const usedServices = new Set([
+  ...(Array.isArray(item?.vehicleDetails?.custUpcomingService)
+    ? item.vehicleDetails.custUpcomingService
+    : []),
+
+  ...approvedExtendedServices,
+]);
+
+
+
+  const latestExtendedPolicy = item?.extendedPolicy
     ?.slice() // avoid mutating original array
-    ?.sort(
-      (a, b) => new Date(b.submittedAt) - new Date(a.submittedAt)
-    )[0];
+    ?.sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt))[0];
 
-const latestStatus = latestExtendedPolicy?.extendedStatus;
+  const latestStatus = latestExtendedPolicy?.extendedStatus;
 
-const validateForm = () => {
-  const {
-    extendedPolicyPeriod,
-    additionalPrice,
-    validDate,
-    validMileage,
-    paymentCopyProof,
-    upcomingPackage,
-  } = formData;
+  const validateForm = () => {
+    const {
+      extendedPolicyPeriod,
+      additionalPrice,
+      validDate,
+      validMileage,
+      paymentCopyProof,
+      upcomingPackage,
+    } = formData;
 
-  if (!extendedPolicyPeriod) {
-    toast.error("Extended Policy Period is required");
-    return false;
-  }
+    if (!extendedPolicyPeriod) {
+      toast.error("Extended Policy Period is required");
+      return false;
+    }
 
-  if (!additionalPrice) {
-    toast.error("Additional Price is required");
-    return false;
-  }
+    if (!additionalPrice) {
+      toast.error("Additional Price is required");
+      return false;
+    }
 
-  if (!validDate) {
-    toast.error("Valid Date is required");
-    return false;
-  }
+    if (!validDate) {
+      toast.error("Valid Date is required");
+      return false;
+    }
 
-  if (!validMileage) {
-    toast.error("Valid Mileage is required");
-    return false;
-  }
+    if (!validMileage) {
+      toast.error("Valid Mileage is required");
+      return false;
+    }
 
-  if (!paymentCopyProof) {
-    toast.error("Payment Copy Proof is required");
-    return false;
-  }
+    if (!paymentCopyProof) {
+      toast.error("Payment Copy Proof is required");
+      return false;
+    }
 
-  if (!Array.isArray(upcomingPackage) || upcomingPackage.length === 0) {
-    toast.error("Please select at least one Upcoming Package");
-    return false;
-  }
+    if (!Array.isArray(upcomingPackage) || upcomingPackage.length === 0) {
+      toast.error("Please select at least one Upcoming Package");
+      return false;
+    }
 
-  return true;
-};
+    return true;
+  };
   // Handle form submit
- const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
+    if (!validateForm()) return;
 
-  if (!validateForm()) return;
+    try {
+      const uniqueUpcomingPackage = [...new Set(formData.upcomingPackage)];
 
-  try {
-    const payload = {
-      extendedPolicyPeriod: formData.extendedPolicyPeriod,
-      additionalPrice: formData.additionalPrice,
-      validDate: formData.validDate,
-      validMileage: formData.validMileage,
-      paymentCopyProof: formData.paymentCopyProof,
-      upcomingPackage: formData.upcomingPackage,
-      edit: latestStatus === "pending",
-    };
+      const payload = {
+        extendedPolicyPeriod: formData.extendedPolicyPeriod,
+        additionalPrice: formData.additionalPrice,
+        validDate: formData.validDate,
+        validMileage: formData.validMileage,
+        paymentCopyProof: formData.paymentCopyProof,
+        upcomingPackage: uniqueUpcomingPackage,
+        edit: latestStatus === "pending",
+      };
 
-    const res = await extendedAMC(
-      payload,
-      item?.vehicleDetails?.vinNumber
-    );
+      const res = await extendedAMC(payload, item?.vehicleDetails?.vinNumber);
 
-    toast.success(res?.message || "Submitted successfully");
+      toast.success(res?.message || "Submitted successfully");
 
-    // Reset form
-    setFormData({
-      extendedPolicyPeriod: "",
-      additionalPrice: "",
-      validDate: "",
-      validMileage: "",
-      paymentCopyProof: "",
-      upcomingPackage: [],
-    });
+      setFormData({
+        extendedPolicyPeriod: "",
+        additionalPrice: "",
+        validDate: "",
+        validMileage: "",
+        paymentCopyProof: "",
+        upcomingPackage: [],
+      });
 
-    // Refresh AMC list
-    dispatch(
-      fetchamcLists({
-        page: 1,
-        perPage: 10,
-        searchTerm: null,
-        userId: null,
-        status: false,
-      })
-    );
+      dispatch(
+        fetchamcLists({
+          page: 1,
+          perPage: 10,
+          searchTerm: null,
+          userId: null,
+          status: false,
+        })
+      );
 
-    closePopUp();
-  } catch (error) {
-    toast.error(
-      error?.response?.data?.message ||
-      error?.message ||
-      "Something went wrong"
-    );
-    console.log("Error:", error);
-  }
-};
+      closePopUp();
+    } catch (error) {
+      toast.error(
+        error?.response?.data?.message ||
+          error?.message ||
+          "Something went wrong"
+      );
+      console.log("Error:", error);
+    }
+  };
 
-// console.log(latestStatus)
+  // console.log(latestStatus)
   return (
     <>
       {isPopUpOpen && (
@@ -361,24 +365,47 @@ const validateForm = () => {
                   </label>{" "}
                   <span className="text-red-500">*</span>
                   <div className="w-full h-auto px-3 flex items-center mt-1 bg-[#f1f1f1] rounded-md">
-                    {[
-                      ...(item?.extendedPolicy?.upcomingPackage || []),
-                      ...(item?.vehicleDetails?.custUpcomingService || []),
-                    ].length > 0
-                      ? [
-                          ...(item?.extendedPolicy?.upcomingPackage || []),
-                          ...(item?.vehicleDetails?.custUpcomingService || []),
-                        ].join(", ")
-                      : "No data"}
+                    <div className="w-full h-auto px-3 flex items-center mt-1 bg-[#f1f1f1] rounded-md">
+                      {
+                        /* 1️⃣ Latest Extended Policy (n-1) */
+                        Array.isArray(item?.extendedPolicy) &&
+                        item.extendedPolicy.length > 0 &&
+                        Array.isArray(
+                          item.extendedPolicy[item.extendedPolicy.length - 1]
+                            ?.upcomingPackage
+                        ) &&
+                        item.extendedPolicy[item.extendedPolicy.length - 1]
+                          .upcomingPackage.length > 0
+                          ? item.extendedPolicy[
+                              item.extendedPolicy.length - 1
+                            ].upcomingPackage
+                              .map((s) => s?.value ?? s)
+                              .join(", ")
+                          : /* 2️⃣ Vehicle services ONLY when no extended policy exists */
+                          (!Array.isArray(item?.extendedPolicy) ||
+                              item.extendedPolicy.length === 0) &&
+                            Array.isArray(
+                              item?.vehicleDetails?.custUpcomingService
+                            ) &&
+                            item.vehicleDetails.custUpcomingService.length > 0
+                          ? item.vehicleDetails.custUpcomingService.join(", ")
+                          : /* 3️⃣ Fallback */
+                            "No data"
+                      }
+                    </div>
                   </div>
                 </div>
                 {/* MULTI SELECT */}
                 <MultiSelectInput
+                  put
                   label="Service Offered"
                   name="upcomingPackage"
                   value={formData.upcomingPackage}
                   onChange={handleChange}
-                  options={filteredOptions}
+                 options={upcomingServiceOpt.filter(
+  (opt) => !usedServices.has(opt.value)
+)}
+
                 />
               </div>
 

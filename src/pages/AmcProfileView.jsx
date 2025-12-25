@@ -97,25 +97,28 @@ const AmcProfileView = () => {
   }, [amcByIdorStatus]);
 
   // Compute combined services at the top of your component/render
-  const vehicle = amcByIdorStatus?.data?.vehicleDetails;
-  const ext = amcByIdorStatus?.data?.extendedPolicy;
+const availableCredit = Array.isArray(amcByIdorStatus?.data?.availableCredit)
+  ? amcByIdorStatus?.data?.availableCredit
+  : [];
 
-  let combinedServices = Array.isArray(vehicle?.custUpcomingService)
-    ? [...vehicle.custUpcomingService]
-    : [];
+// Normalize (string or object)
+const normalizedServices = availableCredit.map((s) => ({
+  value: s?.value ?? s,
+  type: s?.type ?? "", // optional if backend sends type
+}));
 
-  if (Array.isArray(ext?.upcomingPackage)) {
-    combinedServices = [...combinedServices, ...ext.upcomingPackage];
-  }
+const freeServiceItems = normalizedServices
+  .filter((s) =>
+    s.value.toLowerCase().includes("free")
+  )
+  .map((s) => s.value);
 
-  // Separate Free & PMS for display
-  const freeServiceItems = combinedServices.filter((item) =>
-    item.toLowerCase().includes("free service")
-  );
-
-  const pmsItems = combinedServices.filter((item) =>
-    item.toLowerCase().includes("preventive maintenance-paid service")
-  );
+const pmsItems = normalizedServices
+  .filter((s) =>
+    s.value.toLowerCase().includes("pms") ||
+    s.value.toLowerCase().includes("preventive")
+  )
+  .map((s) => s.value);
 
   return (
     <>
@@ -302,7 +305,7 @@ const AmcProfileView = () => {
                 </span>
                 <span className="w-1/2 flex flex-col text-[15px]">
                   <span className="font-light mt-4">
-                    Available Credit ({combinedServices.length})
+                    Available Credit ({availableCredit?.length})
                   </span>
                   <span className="font-medium">
                     <div>
