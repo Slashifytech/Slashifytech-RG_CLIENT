@@ -156,6 +156,7 @@ const GroupedInput = ({
   onChange,
   leftFields,
   rightFields,
+  required
 }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
 const today = new Date().toISOString().split("T")[0];

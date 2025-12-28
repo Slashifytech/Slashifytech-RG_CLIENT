@@ -215,7 +215,7 @@ const AmcSalesForm = () => {
       placeholder: "Service Offered",
       label: "Service Offered",
       options: upcomingServiceOpt,
-      // required: true,
+      required: true,
     },
 
     {
@@ -404,6 +404,9 @@ const AmcSalesForm = () => {
       rmEmail,
       rmName,
       rmEmployeeId,
+      custUpcomingService,
+      salesTeamEmail
+
     } = AMCData.vehicleDetails;
 
     if (!model) newErrors.model = "Model is required.";
@@ -425,7 +428,9 @@ const AmcSalesForm = () => {
     if (!dealerLocation)
       newErrors.dealerLocation = "Dealer location is required.";
     if (!rmEmail) newErrors.rmEmail = "Email is required.";
-    if (!rmName) newErrors.rmName = "Name is required.";
+    if (!rmEmail) newErrors.rmEmail = "Email is required.";
+    if (!salesTeamEmail) newErrors.salesTeamEmail = "Sales Team Email is required.";
+      if (!custUpcomingService) newErrors.custUpcomingService = "Services is required.";
     if (!rmEmployeeId) newErrors.rmEmployeeId = "Id is required.";
     if (!/^\d+(\.\d{1,2})?$/.test(total))
       newErrors.total = "Total must be a valid number.";

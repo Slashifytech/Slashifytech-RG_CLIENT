@@ -398,6 +398,7 @@ const AMCForm = () => {
       rmEmail,
       rmName,
       rmEmployeeId,
+      custUpcomingService
     } = AMCData.vehicleDetails;
 
     if (!model) newErrors.model = "Model is required.";
@@ -420,7 +421,8 @@ const AMCForm = () => {
       newErrors.dealerLocation = "Dealer location is required.";
     if (!rmEmail) newErrors.rmEmail = "Email is required.";
     if (!rmName) newErrors.rmName = "Name is required.";
-    if (!rmEmployeeId) newErrors.rmEmployeeId = "Id is required.";
+      if (!rmName) newErrors.rmName = "Name is required.";
+    if (!custUpcomingService) newErrors.custUpcomingService = "Services is required.";
     if (!/^\d+(\.\d{1,2})?$/.test(total))
       newErrors.total = "Total must be a valid number.";
 
