@@ -250,6 +250,7 @@ const AmcSalesForm = () => {
       type: "email",
       placeholder: "Sales Team Email",
       label: "Sales Team Email",
+      required: true
     },
     {
       name: "department",
