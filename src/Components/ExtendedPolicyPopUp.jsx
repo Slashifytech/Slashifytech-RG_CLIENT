@@ -26,27 +26,42 @@ export const ExtendedPolicyPopUp = ({ isPopUpOpen, closePopUp, item }) => {
   });
   const dispatch = useDispatch();
   // Handle input updates
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+const handleChange = (e) => {
+  const { name, value } = e.target;
 
-    setFormData((prev) => {
-      let updatedData = { ...prev, [name]: value };
+  setFormData((prev) => {
+    let updatedData = { ...prev };
 
-      // Auto update Valid Date when extendedPolicyPeriod changes
-      if (name === "extendedPolicyPeriod" && value) {
-        const baseDate = new Date(item?.vehicleDetails?.agreementStartDate);
+    if (name === "extendedPolicyPeriod") {
+      // Allow empty (for delete)
+      if (value === "") {
+        updatedData.extendedPolicyPeriod = "";
+        updatedData.validDate = "";
+        return updatedData;
+      }
 
-        if (!isNaN(baseDate)) {
-          const newDate = new Date(
-            baseDate.setFullYear(baseDate.getFullYear() + Number(value))
-          );
-          updatedData.validDate = newDate.toISOString().split("T")[0]; // format YYYY-MM-DD
-        }
+      const numValue = Number(value);
+
+      // HARD GUARD
+      if (isNaN(numValue)) return prev;
+
+      updatedData.extendedPolicyPeriod = numValue;
+
+      const baseDate = new Date(item?.vehicleDetails?.agreementStartDate);
+      if (!isNaN(baseDate.getTime())) {
+        const newDate = new Date(baseDate);
+        newDate.setFullYear(newDate.getFullYear() + numValue);
+        updatedData.validDate = newDate.toISOString().split("T")[0];
       }
 
       return updatedData;
-    });
-  };
+    }
+
+    // default handler
+    updatedData[name] = value;
+    return updatedData;
+  });
+};
 
   const handleFileSelect = async (name, file) => {
     // console.log("Selected file:", file);

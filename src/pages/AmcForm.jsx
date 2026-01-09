@@ -284,11 +284,11 @@ const AMCForm = () => {
     const { name, value, dataset } = e.target;
     const section = dataset?.section;
 
-    setAMCData((prev) => {
-      const updatedSection = {
-        ...prev[section],
-        [name]: value,
-      };
+   setAMCData((prev) => {
+    const updatedSection = {
+      ...prev[section],
+      [name]: name === "agreementPeriod" ? Number(value) || 0 : value,
+    };
       if (name === "agreementPeriod") {
         updatedSection.MaximumValidPMS = parseFloat(value) || 0;
       }

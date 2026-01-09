@@ -1,8 +1,8 @@
 import apiurl from "../utils";
 
-export const addNewBuyBack = async (payload) => {
+export const addNewBuyBack = async (path, payload) => {
   try {
-    const response = await apiurl.post("/add-new-buy-back", payload);
+    const response = await apiurl.post(path, payload);
 
     return response.data;
   } catch (error) {

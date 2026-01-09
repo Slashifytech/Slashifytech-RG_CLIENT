@@ -245,12 +245,7 @@ const AmcSalesForm = () => {
       placeholder: "General Manager Email Id",
       label: "General Manager Email",
     },
-    {
-      name: "salesTeamEmail",
-      type: "email",
-      placeholder: "Sales Team Email",
-      label: "Sales Team Email",
-    },
+  
     {
       name: "department",
       type: "select",
@@ -293,8 +288,12 @@ const AmcSalesForm = () => {
     setAMCData((prev) => {
       const updatedSection = {
         ...prev[section],
-        [name]: value,
+             [name]: name === "agreementPeriod" ? Number(value) || 0 : value,
+
       };
+        if (name === "rmEmail") {
+      updatedSection.salesTeamEmail = value;
+    }
       if (name === "agreementPeriod") {
         updatedSection.MaximumValidPMS = parseFloat(value) || 0;
       }
@@ -569,7 +568,10 @@ const AmcSalesForm = () => {
         },
         createdBy: "",
       });
-      navigate("/submitted-amc-form");
+      navigate("/submitted-form", {
+  state: { path: "/sales/new-amc" }
+});
+
     } catch (error) {
       toast.error(
         error?.response?.data?.message ||
@@ -631,7 +633,7 @@ const AmcSalesForm = () => {
             });
           }}
         />
-        <div className=" md:mt-[-80px] mt-6 w-96 ">
+        <div className=" mt-6 w-96 ">
           <FileUpload
             imp={true}
             label="Payment/Ledger Screensort"

@@ -17,7 +17,8 @@ import {
 import Header from "../Components/Header";
 import { fetchEwById } from "../features/EwSlice";
 import { addNewEw, updateEw } from "../features/EwApi";
-const EwForm = () => {
+import { logo } from "../assets";
+const EwSalesForm = () => {
   const location = useLocation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -73,7 +74,7 @@ const EwForm = () => {
     createdBy: _id,
   });
 
-  const leftFields = [
+ const leftFields = [
     {
       name: "customerName",
       type: "text",
@@ -234,7 +235,8 @@ const EwForm = () => {
       label: "Location of the Dealer",
       required: true,
     },
-   {
+   
+{
       name: "rmName",
       type: "text",
       placeholder: "Relationship Manager / Service Advisor Name",
@@ -256,8 +258,6 @@ const EwForm = () => {
       required: true,
     },
       
-
-   
     {
       name: "gmEmail",
       type: "email",
@@ -476,11 +476,12 @@ const EwForm = () => {
       return;
     }
     try {
-      const path = "/add-new-ew"
-      let res;
-      res = id ? await updateEw(ewData, id) : await addNewEw(path, ewData);
+        const path = "/add-new-sales-ew"
+      const res = await addNewEw(path, ewData);
       toast.success(res?.message || "EW Added successfully");
-      navigate(-1);
+        navigate("/submitted-form", {
+  state: { path: "/sales/new-ew" }
+});
     } catch (error) {
       toast.error(error?.message || "Something went wrong");
       console.log("Error:", error);
@@ -488,18 +489,15 @@ const EwForm = () => {
   };
   return (
     <>
-      <div className="fixed">
-        <div className="absolute">
-          {roleType === "0" ? <Nav /> : roleType === "2" ? <SideNav /> : null}
-        </div>
-      </div>
+      <img
+             src={logo}
+             alt="img"
+             className="w-32 h-20 rounded-full ml-6"
+             loading="lazy"
+           />
 
-      <div>
-        <Header />
-      </div>
-
-      <span className="flex md:flex-row flex-col md:items-center justify-between md:mx-36 mx-6 font-head md:pt-10 ">
-        <p className="md:text-[23px] text-[18px] font-semibold pt-20 md:ml-[13.5%] sm:ml-[25%]">
+      <span className="flex md:flex-row flex-col md:items-center justify-between md:mx-20 mx-6 font-head  ">
+        <p className="md:text-[23px] text-[18px] font-semibold pt-12 ">
           Add New EW Warranty
         </p>
         <p className="md:text-[18px] text-[16px] font-medium md:pt-12 pt-4 sm:ml-[25%]">
@@ -508,7 +506,7 @@ const EwForm = () => {
         </p>
       </span>
 
-      <div className="sm:ml-[26.5%] md:ml-[21%]  w-full">
+      <div className="sm:ml-[9.5%] md:ml-[5%]  w-full">
         <p className="text-[20px] font-head font-semibold mt-5">
           Customer Personal Details
         </p>
@@ -567,4 +565,4 @@ const EwForm = () => {
   );
 };
 
-export default EwForm;
+export default EwSalesForm;

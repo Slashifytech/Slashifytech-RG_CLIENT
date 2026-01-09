@@ -17,20 +17,20 @@ const Cards = ({
 
   // const toggleDropdown = () => setIsOpen((prev) => !prev);
 
-  const serviceTypeOrder = [
-  "1st Free Service",
-  "2nd Free Service",
-  "3rd Free Service",
-  "4th Free Service",
-  "5th Free Service",
-  "1st Preventive Maintenance Service (PMS)",
-  "2nd Preventive Maintenance Service (PMS)",
-  "3rd Preventive Maintenance Service (PMS)",
-  "4th Preventive Maintenance Service (PMS)",
-  "5th Preventive Maintenance Service (PMS)",
-  "6th Preventive Maintenance Service (PMS)",
-  "7th Preventive Maintenance Service (PMS)"
-];
+//   const serviceTypeOrder = [
+//   "1st Free Service",
+//   "2nd Free Service",
+//   "3rd Free Service",
+//   "4th Free Service",
+//   "5th Free Service",
+//   "1st Preventive Maintenance Service (PMS)",
+//   "2nd Preventive Maintenance Service (PMS)",
+//   "3rd Preventive Maintenance Service (PMS)",
+//   "4th Preventive Maintenance Service (PMS)",
+//   "5th Preventive Maintenance Service (PMS)",
+//   "6th Preventive Maintenance Service (PMS)",
+//   "7th Preventive Maintenance Service (PMS)"
+// ];
 
    return (
     <Link to={linkData}>

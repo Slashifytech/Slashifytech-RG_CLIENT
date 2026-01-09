@@ -1,15 +1,23 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { GroupedInput } from "../Components/Input";
+import { FileUpload, GroupedInput } from "../Components/Input";
 import { useLocation, useNavigate } from "react-router-dom";
 import Nav from "../admin/Nav";
 import SideNav from "../agent/SideNav";
 import { useDispatch, useSelector } from "react-redux";
 import { createdDate, formatDate } from "../helper/commonHelperFunc";
 import { addNewBuyBack, updateBuyBack } from "../features/BuybackApi";
-import { fuelType, locationOption, modelOption } from "../data";
+import { departmentOpt, fuelType, locationOption, modelOption } from "../data";
 import { fetchbuyBackDataById } from "../features/BuyBackSlice";
 import Header from "../Components/Header";
+import {
+  deleteObject,
+  getDownloadURL,
+  ref,
+  uploadBytes,
+} from "firebase/storage";
+import { v4 as uuidv4 } from "uuid";
+import { storage } from "../../Util/fireBase";
 const BuyBackForm = () => {
   const location = useLocation();
   const dispatch = useDispatch();
@@ -42,11 +50,15 @@ const BuyBackForm = () => {
       rmName: "",
       rmEmployeeId: "",
       gmEmail: "",
+       paymentScreenshot: "",
+       bookingId:"",
+       department:"",
+       paymentReceivedDateForPackage:""
     },
     createdBy: _id,
   });
 
-  const rightFields = [
+  const leftFields = [
     {
       name: "customerName",
       type: "text",
@@ -54,6 +66,8 @@ const BuyBackForm = () => {
       label: "Customer Name",
       required: true,
     },
+        { name: "address", type: "text", placeholder: "Address", label: "Address" },
+
     {
       name: "contact",
       type: "number",
@@ -61,70 +75,73 @@ const BuyBackForm = () => {
       label: "Contact",
       required: true,
     },
-    {
-      name: "pan",
-      type: "text",
-      placeholder: "Pan Number",
-      label: "Pan Number",
-    },
-    {
-      name: "zipCode",
-      type: "number",
-      placeholder: "Zip Code",
-      label: "Zip Code",
-    },
-  ];
-  const leftFields = [
-    { name: "address", type: "text", placeholder: "Address", label: "Address" },
-    {
+  {
       name: "email",
       type: "email",
       placeholder: "Email",
       label: "Email",
       required: true,
     },
+  
+  ];
+  const rightFields = [
     {
-      name: "customerGst",
-      type: "text",
-      placeholder: "Customer Gst",
-      label: "Customer Gst",
+      name: "zipCode",
+      type: "number",
+      placeholder: "Zip Code",
+      label: "Zip Code",
     },
-    {
+   {
       name: "stateCode",
       type: "text",
       placeholder: "State Code",
       label: "State Code",
     },
+     {
+      name: "pan",
+      type: "text",
+      placeholder: "Pan Number",
+      label: "Pan Number",
+    },
+    
+     {
+      name: "customerGst",
+      type: "text",
+      placeholder: "Customer Gst Number",
+      label: "Customer Gst Number",
+    },
   ];
   const rightVehicleFields = [
-    {
-      name: "fuelType",
-      type: "select",
-      placeholder: "Fuel Type",
-      label: "Fuel Type",
-      options: fuelType,
-      required: true,
-    },
-    {
-      name: "agreementStartDate",
+   
+     {
+      name: "paymentReceivedDateForPackage",
       type: "date",
-      placeholder: "Agreement Start Date",
-      label: "Agreement Start Date",
-      required: true,
+      placeholder: "Payment Received Date for Package",
+      label: "Payment Received Date for Package",
+      // required: true,
+      limitDate: true,
+       required: true,
     },
 
-    {
-      name: "deliveryDate",
-      type: "date",
-      placeholder: "Delivery Date",
-      label: "Delivery Date",
-      required: true,
-    },
     {
       name: "validityMilage",
       type: "text",
       placeholder: "Validity Milage",
       label: "Validity Milage",
+      required: true,
+    },
+     
+         {
+      name: "bookingId",
+      type: "text",
+      placeholder: "Bookinng Id",
+      label: "Booking Id",
+    },
+     {
+      name: "totalPayment",
+      type: "text",
+      placeholder: "Total Payment",
+      label: "Total Payment",
       required: true,
     },
     {
@@ -134,13 +151,26 @@ const BuyBackForm = () => {
       label: "Name of Relationship Manager / Service Advisor",
       required: true,
     },
-
+   {
+      name: "rmEmployeeId",
+      type: "text",
+      placeholder: "Employee Id of Relationship Manager/ Service Advisor",
+      label: "Employee Id of Relationship Manager/ Service Advisor",
+      required: true,
+    },
+  
     {
       name: "rmEmail",
       type: "email",
       placeholder: " Relationship Manager/ Service Advisor Email Id",
       label: "Email Id of Relationship Manager/ Service Advisor ",
       required: true,
+    },
+      {
+      name: "gmEmail",
+      type: "email",
+      placeholder: "General Manager Email Id",
+      label: "General Manager Email",
     },
   ];
 
@@ -153,6 +183,14 @@ const BuyBackForm = () => {
       options: modelOption,
       required: true,
     },
+     {
+      name: "fuelType",
+      type: "select",
+      placeholder: "Fuel Type",
+      label: "Fuel Type",
+      options: fuelType,
+      required: true,
+    },
     {
       name: "vinNumber",
       type: "text",
@@ -160,18 +198,18 @@ const BuyBackForm = () => {
       label: "Vin Number",
       required: true,
     },
+     {
+      name: "agreementStartDate",
+      type: "date",
+      placeholder: "Agreement Start Date",
+      label: "Agreement Start Date",
+      required: true,
+    },
     {
       name: "agreementValidDate",
       type: "date",
       placeholder: "Agreement Valid Date",
       label: "Agreement Valid Date ",
-      required: true,
-    },
-    {
-      name: "totalPayment",
-      type: "text",
-      placeholder: "Total Payment",
-      label: "Total Payment",
       required: true,
     },
     {
@@ -183,21 +221,29 @@ const BuyBackForm = () => {
       required: true,
     },
 
- 
-  
     {
-      name: "rmEmployeeId",
-      type: "text",
-      placeholder: "Employee Id of Relationship Manager/ Service Advisor",
-      label: "Employee Id of Relationship Manager/ Service Advisor",
+      name: "deliveryDate",
+      type: "date",
+      placeholder: "Delivery Date",
+      label: "Delivery Date",
       required: true,
     },
-    {
-      name: "gmEmail",
-      type: "email",
-      placeholder: "General Manager Email Id",
-      label: "General Manager Email",
-    },
+     {
+          name: "department",
+          type: "select",
+          placeholder: "Department",
+          label: "Department",
+          options: departmentOpt,
+          // required: true,
+        },
+    
+   
+   
+    
+
+ 
+  
+ 
   ];
   const [errors, setErrors] = useState({});
   const id = location?.state?.docId;
@@ -339,6 +385,59 @@ const BuyBackForm = () => {
     return Object.keys(newErrors).length === 0;
   };
 
+
+     const handleFileSelect = async (name, file) => {
+        // console.log("Selected file:", file);
+        if (!file) return;
+    
+        // const storageRef = ref(storage, `files/${file?.name}`);
+        const uniqueFileName = `${uuidv4()}-${file.name}`;
+        const storageRef = ref(storage, `files/rgbuyback/${uniqueFileName}`);
+        try {
+          const snapshot = await uploadBytes(storageRef, file);
+          console.log("Uploaded file:", snapshot);
+          const downloadURL = await getDownloadURL(snapshot.ref);
+          console.log("File available at:", downloadURL);
+    
+          setBuyBack((prevData) => ({
+            ...prevData,
+            vehicleDetails: {
+              ...prevData.vehicleDetails,
+              paymentScreenshot: downloadURL,
+            },
+          }));
+    
+          toast.success("File uploaded successfully!");
+        } catch (error) {
+          console.error("Error uploading file:", error);
+          toast.error("Error uploading file. Please try again.");
+        }
+      };
+    
+      const deleteFile = async (fileUrl, uploadType) => {
+        if (!fileUrl) return;
+    
+        const storageRef = ref(storage, fileUrl);
+    
+        try {
+          // toast.success("File deleted successfully!");
+    
+          setBuyBack((prevData) => ({
+            ...prevData,
+            vehicleDetails: {
+              ...prevData.vehicleDetails,
+              paymentScreenshot: "",
+            },
+          }));
+    
+          await deleteObject(storageRef);
+        } catch (error) {
+          console.error("Error deleting file:", error);
+          // toast.error("Error deleting file. Please try again.");
+        }
+      };
+  
+
   useEffect(() => {
     if (id) {
       dispatch(fetchbuyBackDataById({ id }));
@@ -361,10 +460,11 @@ const BuyBackForm = () => {
       return;
     }
     try {
+       const path = "/add-new-buy-back"
       let res;
       res = id
         ? await updateBuyBack(buyBack, id)
-        : await addNewBuyBack(buyBack);
+        : await addNewBuyBack(path, buyBack);
       toast.success(res?.message || "Buyback Added successfully");
       navigate(-1);
     } catch (error) {
@@ -390,7 +490,7 @@ const BuyBackForm = () => {
           Add New Buy Back
         </p>
         <p className="md:text-[18px] text-[16px] font-medium md:pt-12 pt-4 sm:ml-[25%]">
-          AMC Issue Date -{" "}
+          Buyback Issue Date -{" "}
           {id ? formatDate(buyBackByIdorStatus?.createdAt) : formattedDate}
         </p>
       </span>
@@ -427,6 +527,26 @@ const BuyBackForm = () => {
             });
           }}
         />
+        <div className="mt-6 w-96">
+          <FileUpload
+            imp={true}
+            label="Payment/Ledger Screensort"
+            onFileSelect={(file) => handleFileSelect("paymentScreenshot", file)}
+            deleteFile={() =>
+              deleteFile(
+                buyBack.vehicleDetails.paymentScreenshot,
+                "paymentScreenshot"
+              )
+            }
+            name="paymentScreenshot"
+            fileUrl={buyBack.vehicleDetails.paymentScreenshot}
+          />
+          {errors.paymentScreenshot && (
+            <p className="text-red-500 mt-1 text-sm">
+              {errors.paymentScreenshot}
+            </p>
+          )}
+        </div>
         <div
           onClick={handleSubmit}
           className="bg-primary text-white mt-16 rounded-md px-6 py-2 cursor-pointer w-28 text-center mb-20"

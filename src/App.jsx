@@ -41,6 +41,8 @@ import AmcSalesForm from "./pages/AmcSalesForm";
 import { ExtendedPolicyOpenForm } from "./pages/ExtendPolicyOpenForm";
 import SubmitPage from "./Components/AdminComponents/SubmitPage";
 import PublicSubmissionPopup from "./Components/PublicSubmissionPopup";
+import BuyBackSalesForm from "./pages/ByBackSalesForm";
+import EwSalesForm from "./pages/EwSalesForm";
 
 const router = createBrowserRouter([
   {
@@ -53,8 +55,19 @@ const router = createBrowserRouter([
         <AmcSalesForm/>
     ),
   },
+     {
+    path: "/sales/new-buyback",
+    element: (
+        <BuyBackSalesForm/>
+    ),
+  },   {
+    path: "/sales/new-ew",
+    element: (
+        <EwSalesForm/>
+    ),
+  },
   {
-    path: "/submitted-amc-form",
+    path: "/submitted-form",
     element: (
         <SubmitPage/>
     ),

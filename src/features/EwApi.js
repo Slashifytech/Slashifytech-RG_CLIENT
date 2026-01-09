@@ -1,8 +1,8 @@
 import apiurl from "../utils";
 
-export const addNewEw = async (payload) => {
+export const addNewEw = async (path, payload) => {
   try {
-    const response = await apiurl.post("/add-new-ew", payload);
+    const response = await apiurl.post(path, payload);
 
     return response.data;
   } catch (error) {

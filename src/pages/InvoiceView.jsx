@@ -15,7 +15,7 @@ import { formatDate } from "../helper/commonHelperFunc";
 const InvoiceView = forwardRef(({ id }, ref) => {
   const [data, setData] = useState();
   const { invoiceToken } = useParams();
-  const invoiceId = id ? id : invoiceToken;
+const invoiceId = id ? id : invoiceToken;
   let totalPrice = 0;
   let sgstAmount = 0;
   let cgstAmount = 0;

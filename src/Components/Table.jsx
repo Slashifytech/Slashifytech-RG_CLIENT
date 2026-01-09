@@ -857,7 +857,7 @@ export function CustomTableFour({
                     </Typography>
                   </td>
                 )}
-                {!row?.data?.isDisabled && (
+                {!row?.data?.isDisabled && redirectLink === "/amc-view" && (
                   <td className="p-4">
                     <Typography
                       variant="small"
