@@ -184,7 +184,7 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/lev/amc-lists",
+    path: "/mgsa/amc-lists",
     element: (
       <ProtectedThirdlev>
         <AdminAmcList></AdminAmcList>

@@ -49,7 +49,7 @@ const Login = () => {
           } else if (res?.payload?.user?.roleType === "1") {
             navigate("/admin/approval-lists");
           } else if (res?.payload?.user?.roleType === "3") {
-            navigate("/lev/amc-lists");
+            navigate("/mgsa/amc-lists");
             }
         } else {
           toast.error("Invalid credentials");

@@ -25,7 +25,7 @@ const ThirdRoleSideNav = () => {
   };
   const sidebarList = [
     {
-        pathPage: "/lev/amc-lists",
+        pathPage: "/mgsa/amc-lists",
         icon: <BiSolidCarMechanic />,
         label: "AMC Lists",
 
