@@ -314,7 +314,7 @@ export function CustomTableTwo({
                         row.data?.agentId,
                         role === "0" ? "approved" : "pending",
                         null,
-                        row?.data?.commonEmail
+                        row?.data?.commonEmail,
                       );
                     }
                   }}
@@ -324,19 +324,19 @@ export function CustomTableTwo({
                     row.agentApprovalStatus === "pending"
                       ? "bg-[#fa9c30] "
                       : row.agentApprovalStatus === "approved"
-                      ? "bg-[#09985C]"
-                      : row.agentApprovalStatus === "rejected"
-                      ? "bg-[#D33131]"
-                      : "bg-primary"
+                        ? "bg-[#09985C]"
+                        : row.agentApprovalStatus === "rejected"
+                          ? "bg-[#D33131]"
+                          : "bg-primary"
                   }`}
                 >
                   {row.agentApprovalStatus === "pending"
                     ? "Pending"
                     : row.agentApprovalStatus === "rejected"
-                    ? "Rejected"
-                    : row.agentApprovalStatus === "approved"
-                    ? "Approved"
-                    : "Send"}
+                      ? "Rejected"
+                      : row.agentApprovalStatus === "approved"
+                        ? "Approved"
+                        : "Send"}
                 </Typography>
               </td>
               <td className="p-4">
@@ -348,7 +348,7 @@ export function CustomTableTwo({
                         row?.data?.policyDbId,
                         row?.data?.customerName,
                         "pending",
-                        row?.data?.commonEmail
+                        row?.data?.commonEmail,
                       );
                     }
                   }}
@@ -358,19 +358,19 @@ export function CustomTableTwo({
                     loading
                       ? "bg-gray-400 cursor-not-allowed"
                       : row?.clientApprovalStatus === "pending"
-                      ? "bg-[#fa9c30]"
-                      : row?.clientApprovalStatus === "approved"
-                      ? "bg-[#09985C]"
-                      : "bg-primary"
+                        ? "bg-[#fa9c30]"
+                        : row?.clientApprovalStatus === "approved"
+                          ? "bg-[#09985C]"
+                          : "bg-primary"
                   }`}
                 >
                   {loading
                     ? "Sending ..."
                     : row?.clientApprovalStatus === "pending"
-                    ? "Pending"
-                    : row?.clientApprovalStatus === "approved"
-                    ? "Approved"
-                    : "Send"}
+                      ? "Pending"
+                      : row?.clientApprovalStatus === "approved"
+                        ? "Approved"
+                        : "Send"}
                 </Typography>
               </td>
 
@@ -389,7 +389,7 @@ export function CustomTableTwo({
                         row.data?.policyDbId,
                         row?.data?.customerName,
                         newStatus,
-                        row?.data?.commonEmail
+                        row?.data?.commonEmail,
                       )
                     }
                   />
@@ -784,7 +784,7 @@ export function CustomTableFour({
                         <span
                           className={`${(() => {
                             const remainingText = getRelativeTime(
-                              row?.data?.createdAt
+                              row?.data?.createdAt,
                             );
                             const match = remainingText.match(/(\d+)/);
                             const remainingDays = match
@@ -839,7 +839,8 @@ export function CustomTableFour({
                     {formatDate(row.data.createdAt)}
                   </Typography>
                 </td>
-                {row.type !== "ewPolicy" && (
+
+                {roleType !== "3" && row.type !== "ewPolicy" && (
                   <td className="p-4">
                     <Typography
                       as="a"
@@ -857,33 +858,36 @@ export function CustomTableFour({
                     </Typography>
                   </td>
                 )}
-                {!row?.data?.isDisabled && redirectLink === "/amc-view" && (
-                  <td className="p-4">
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="font-normal"
-                    >
-                      {row?.data?.extendedPolicy?.[
-                        row?.data?.extendedPolicy.length - 1
-                      ]?.extendedStatus === "pending" ? (
-                        <span
-                          onClick={() => openExtPopup(row?.data)}
-                          className="border border-primary text-primary px-6 py-1 rounded-md cursor-pointer"
-                        >
-                          Edit
-                        </span>
-                      ) : (
-                        <span
-                          onClick={() => openExtPopup(row?.data)}
-                          className="border border-primary text-primary px-6 py-1 rounded-md cursor-pointer"
-                        >
-                          Add
-                        </span>
-                      )}
-                    </Typography>
-                  </td>
-                )}
+
+                {roleType !== "3" &&
+                  !row?.data?.isDisabled &&
+                  redirectLink === "/amc-view" && (
+                    <td className="p-4">
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal"
+                      >
+                        {row?.data?.extendedPolicy?.[
+                          row?.data?.extendedPolicy.length - 1
+                        ]?.extendedStatus === "pending" ? (
+                          <span
+                            onClick={() => openExtPopup(row?.data)}
+                            className="border border-primary text-primary px-6 py-1 rounded-md cursor-pointer"
+                          >
+                            Edit
+                          </span>
+                        ) : (
+                          <span
+                            onClick={() => openExtPopup(row?.data)}
+                            className="border border-primary text-primary px-6 py-1 rounded-md cursor-pointer"
+                          >
+                            Add
+                          </span>
+                        )}
+                      </Typography>
+                    </td>
+                  )}
                 <td className="p-4">
                   <Typography
                     variant="small"
@@ -918,25 +922,26 @@ export function CustomTableFour({
                       row?.status === "pending"
                         ? "bg-[#096D98] "
                         : row?.status === "approved"
-                        ? "bg-[#09985C]"
-                        : row?.status === "rejected" || row?.status === true
-                        ? "bg-[#D33131]"
-                        : row?.status === "terminated" || row?.status === true
-                        ? "bg-[#D33131]"
-                        : "bg-primary"
+                          ? "bg-[#09985C]"
+                          : row?.status === "rejected" || row?.status === true
+                            ? "bg-[#D33131]"
+                            : row?.status === "terminated" ||
+                                row?.status === true
+                              ? "bg-[#D33131]"
+                              : "bg-primary"
                     }`}
                   >
                     {row?.status === "pending"
                       ? "Pending"
                       : row?.status === "rejected"
-                      ? "Rejected"
-                      : row?.status === "approved"
-                      ? "Approved"
-                      : row?.status === true
-                      ? "Cancelled"
-                      : row?.status === "terminated"
-                      ? "Terminated"
-                      : row?.status}
+                        ? "Rejected"
+                        : row?.status === "approved"
+                          ? "Approved"
+                          : row?.status === true
+                            ? "Cancelled"
+                            : row?.status === "terminated"
+                              ? "Terminated"
+                              : row?.status}
                   </Typography>
                 </td>
                 {row?.status === "rejected" && roleType === "2" ? (
@@ -991,13 +996,14 @@ export function CustomTableFour({
                             Resubmit
                           </span>
                         )}
-
-                        <span
-                          onClick={() => openPopUp(row?.data?._id)}
-                          className="bg-primary text-white rounded-md px-6 py-1 cursor-pointer"
-                        >
-                          Cancel
-                        </span>
+                        {roleType !== "3" && (
+                          <span
+                            onClick={() => openPopUp(row?.data?._id)}
+                            className="bg-primary text-white rounded-md px-6 py-1 cursor-pointer"
+                          >
+                            Cancel
+                          </span>
+                        )}
                       </div>
                     </Typography>
                   </td>

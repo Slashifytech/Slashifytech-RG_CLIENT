@@ -8,8 +8,8 @@ import { BiSolidCarMechanic } from "react-icons/bi";
 import { FaCarOn } from "react-icons/fa6";
 import { HiClipboardDocumentList } from "react-icons/hi2";
 
-const SideNav = () => {
-  const location = useLocation();
+const ThirdRoleSideNav = () => {
+ const location = useLocation();
   const path = location.pathname;
   const [isOpen, setIsOpen] = useState(
     JSON.parse(localStorage.getItem("isOpen")) ?? true
@@ -25,26 +25,12 @@ const SideNav = () => {
   };
   const sidebarList = [
     {
-      pathPage: "/agent/amcs-list",
-      icon: <BiSolidCarMechanic />,
-      label: "AMC Lists",
-      otherPath: "/agent/edit-AMC",
-      otherPathTwo: "/agent/amc-form",
-    },
-    {
-      pathPage: "/agent/ewpolicy-list",
-      icon: <HiClipboardDocumentList />,
-      label: "Ew Policy Lists",
-      otherPath: "/agent/edit-ewpolicy",
-      otherPathTwo: "/agent/ewpolicy-form",
-    },
-    {
-      pathPage: "/agent/buybacks-list",
-      icon: <FaCarOn />,
-      label: "Buyback Lists",
-      otherPath: "/agent/buyback-form",
-      otherPathTwo: "/agent/edit-buyback",
-    },
+        pathPage: "/lev/amc-lists",
+        icon: <BiSolidCarMechanic />,
+        label: "AMC Lists",
+
+      },
+
   ];
 
   useEffect(() => {
@@ -65,10 +51,7 @@ const SideNav = () => {
           <div
             key={index}
             className={`cursor-pointer py-4 hover:bg-[#d3d3d3] hover:text-primary hover:border-l-4 hover:font-medium ${
-              path === item.pathPage ||
-              path === item?.otherPath ||
-              path === item?.otherPathTwo ||
-              path === item?.otherPathThree
+              path === item.pathPage
                 ? "bg-[#c0c0c0] text-primary border-l-4 border-primary font-medium"
                 : "text-sidebar"
             }`}
@@ -145,5 +128,4 @@ const SideNav = () => {
     </>
   );
 };
-
-export default SideNav;
+export default ThirdRoleSideNav;

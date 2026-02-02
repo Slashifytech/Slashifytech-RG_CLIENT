@@ -21,6 +21,7 @@ import { RiUpload2Fill } from "react-icons/ri";
 import Papa from "papaparse";
 import { IoMdDownload } from "react-icons/io";
 import { downloadCsvData } from "../../Util/UtilityFunction";
+import ThirdRoleSideNav from "../../../rg-prod/src/agent/ThirdRoleSideNav";
 const AdminAmcList = () => {
   const { _id, roleType } = useSelector((state) => state.users?.users);
   const userId = roleType === "2" ? _id : null;
@@ -44,7 +45,7 @@ const AdminAmcList = () => {
       dispatch(
         fetchamcLists({ page, perPage, searchTerm, userId, option: null })
       );
-    } else if (roleType === "0" || roleType === "1") {
+    } else if (roleType === "0" || roleType === "1" || roleType === "3") {
       dispatch(
         fetchamcLists({
           page,
@@ -59,7 +60,7 @@ const AdminAmcList = () => {
   
   }, [page, perPage, searchTerm, userId]);
 
-  const TABLE_HEAD = [
+ const BASE_TABLE_HEAD = [
     "S.No.",
     "AMC Id",
     "Name",
@@ -72,6 +73,14 @@ const AdminAmcList = () => {
     "Status",
     "Action",
   ];
+
+
+ const TABLE_HEAD =
+  roleType === "3"
+    ? BASE_TABLE_HEAD.filter(
+        (col) => col !== "View Profile" && col !== "Action" && col !== "Extended Policy"
+      )
+    : BASE_TABLE_HEAD;
 
   const TABLE_ROWS = amcLists?.data?.map((data, index) => ({
     sno: (currentPage - 1) * perPage + index + 1,
@@ -272,42 +281,50 @@ const handleFileUpload = async (event) => {
     <>
       <div className="fixed">
         <span className="absolute">
-          {roleType === "2" ? <SideNav /> : <Nav />}
+          {roleType === "2" ? <SideNav /> : roleType === "3" ? <ThirdRoleSideNav /> :  <Nav />}
         </span>
       </div>
       <div>
         <Header />
       </div>
       <div className="md:pt-20 sm:pt-20 pt-6 flex md:flex-row sm:flex-row flex-col-reverse justify-between md:items-center sm:items-center md:px-20 mx-6 ">
+       {
+        roleType !== "3" &&
+       
         <Link
           onClick={handleDispatch}
           to={roleType === "2" ? "/agent/amc-form" : "/admin/add-amc"}
           className="px-6 bg-primary text-white rounded-md py-2 text-[16px] md:ml-[15.5%] sm:ml-[26%] mt-4 sm:mt-4 md:mt-4 "
         >
           + Add New AMC
-        </Link>
+        </Link>}
 
-        {roleType === "0" && (
-          <span className="flex flex-row items-center gap-6 ">
-            <span
-              onClick={handleDownload}
-              className="px-6 bg-primary flex flex-row items-center cursor-pointer gap-3 text-white rounded-md py-2 text-[16px]  mt-4 sm:mt-4 md:mt-4"
-            >
-              Download CSV
-              <IoMdDownload />
-            </span>
-            <label className="px-6 bg-primary flex flex-row items-center cursor-pointer gap-3 text-white rounded-md py-2 text-[16px]  mt-4 sm:mt-4 md:mt-4">
-              <input
-                type="file"
-                accept=".csv"
-                onChange={handleFileUpload}
-                className="hidden"
-              />
-              Upload CSV
-              <RiUpload2Fill />
-            </label>
-          </span>
-        )}
+       <span className="flex flex-row items-center gap-6">
+  {(roleType === "0" || roleType === "3") && (
+    <span
+      onClick={handleDownload}
+ className={`px-6 bg-primary flex flex-row items-center cursor-pointer gap-3 text-white rounded-md py-2 text-[16px] mt-4 ${
+    roleType === "3" ? "mx-52" : ""
+  }`}    >
+      Download CSV
+      <IoMdDownload />
+    </span>
+  )}
+
+  {roleType === "0" && (
+    <label className="px-6 bg-primary flex flex-row items-center cursor-pointer gap-3 text-white rounded-md py-2 text-[16px] mt-4">
+      <input
+        type="file"
+        accept=".csv"
+        onChange={handleFileUpload}
+        className="hidden"
+      />
+      Upload CSV
+      <RiUpload2Fill />
+    </label>
+  )}
+</span>
+
       </div>
 
       <div className="px-6 flex justify-start md:ml-[18.5%] sm:ml-48 mt-6 ">

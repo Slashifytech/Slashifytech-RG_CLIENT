@@ -43,6 +43,7 @@ import SubmitPage from "./Components/AdminComponents/SubmitPage";
 import PublicSubmissionPopup from "./Components/PublicSubmissionPopup";
 import BuyBackSalesForm from "./pages/ByBackSalesForm";
 import EwSalesForm from "./pages/EwSalesForm";
+import ProtectedThirdlev from "./Components/ProtectedThirdlev";
 
 const router = createBrowserRouter([
   {
@@ -180,6 +181,14 @@ const router = createBrowserRouter([
       <ProtectedAdmin>
         <AdminAmcList></AdminAmcList>
       </ProtectedAdmin>
+    ),
+  },
+  {
+    path: "/lev/amc-lists",
+    element: (
+      <ProtectedThirdlev>
+        <AdminAmcList></AdminAmcList>
+      </ProtectedThirdlev>
     ),
   },
   {

@@ -253,7 +253,7 @@ const Nav = () => {
           Raam Group
         </p>
         <p className="font-light text-primary pl-6 text-[12px] pt-1 mb-20">
-          © 2025 All Rights Reserved
+          © 2026 All Rights Reserved
         </p>
       </div>
       <LogoutPop isLogoutOpen={isLogoutOpen} closeLogout={closeLogout} />
