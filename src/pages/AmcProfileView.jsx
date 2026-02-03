@@ -13,10 +13,12 @@ import InputField, { SelectInput } from "../Components/Input";
 import { amcAssuredAddData } from "../features/AMCapi";
 import { toast } from "react-toastify";
 import { amcProfileOpt } from "../data";
+import ThirdRoleSideNav from "../agent/ThirdRoleSideNav";
 
 const AmcProfileView = () => {
   const { amcByIdorStatus } = useSelector((state) => state.amc);
   const services = amcByIdorStatus?.data?.vehicleDetails?.custUpcomingService;
+  const {roleType } = useSelector((state) => state.users?.users);
 
   const dispatch = useDispatch();
   const location = useLocation();
@@ -123,9 +125,9 @@ const pmsItems = normalizedServices
   return (
     <>
       <Header customLink="/agent/shortlist" />
-      <div>
-        <span className="fixed overflow-y-scroll scrollbar-hide bg-white">
-          <Nav />
+      <div className="fixed">
+        <span className="absolute">
+          { roleType === "3" ? <ThirdRoleSideNav/> :  <Nav />}
         </span>
       </div>
 
