@@ -840,7 +840,7 @@ export function CustomTableFour({
                   </Typography>
                 </td>
 
-                {roleType !== "3" && row.type !== "ewPolicy" && (
+                { row.type !== "ewPolicy" && (
                   <td className="p-4">
                     <Typography
                       as="a"
