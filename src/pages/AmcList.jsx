@@ -78,7 +78,7 @@ const AdminAmcList = () => {
  const TABLE_HEAD =
   roleType === "3"
     ? BASE_TABLE_HEAD.filter(
-        (col) => col !== "View Profile" && col !== "Action" && col !== "Extended Policy"
+        (col) => col !== "Action" && col !== "Extended Policy"
       )
     : BASE_TABLE_HEAD;
 
