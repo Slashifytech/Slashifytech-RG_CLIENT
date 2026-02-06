@@ -59,6 +59,19 @@ export const upcomingServiceOpt = [
     value: "7th Preventive Maintenance-Paid Service(PMS)",
     label: "7th Preventive Maintenance-Paid Service(PMS)",
   },
+   {
+    id: 12,
+    value: "8th Preventive Maintenance-Paid Service(PMS)",
+    label: "8th Preventive Maintenance-Paid Service(PMS)",
+  }, {
+    id: 13,
+    value: "9th Preventive Maintenance-Paid Service(PMS)",
+    label: "9th Preventive Maintenance-Paid Service(PMS)",
+  }, {
+    id: 14,
+    value: "10th Preventive Maintenance-Paid Service(PMS)",
+    label: "10th Preventive Maintenance-Paid Service(PMS)",
+  },
 ];
 export const departmentOpt = [
   { id: 0, value: "Sales", label: "Sales" },
